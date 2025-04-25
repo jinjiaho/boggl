@@ -1,0 +1,114 @@
+---
+
+---
+
+<astro-boggl>
+  <div class="boggl-base">
+    <div class="boggl-grid"></div>
+  </div>
+</astro-boggl>
+<script>
+  import { CUBES } from "../config";
+  import { Chance } from "chance";
+  import type { CubeType } from "../types";
+
+  class Boggl extends HTMLElement {
+    constructor() {
+      super();
+      const cubes: CubeType[] = [...CUBES];
+      const chance = new Chance();
+      const grid = this.querySelector(".boggl-grid") as HTMLDivElement;
+
+      shakeBoard();
+
+      function shakeBoard() {
+        while (cubes.length) {
+          const pickedCube = pickCube(cubes);
+          const pickedSide = pickSide(pickedCube.cube);
+          addCube(pickedSide);
+          cubes.splice(pickedCube.index, 1);
+        }
+      }
+
+      function pickCube(cubeArray: CubeType[]) {
+        const index = chance.integer({ min: 0, max: cubeArray.length - 1 });
+        return {
+          index,
+          cube: cubeArray[index],
+        };
+      }
+
+      function pickSide(cube: CubeType) {
+        const side = chance.integer({ min: 0, max: 5 });
+        return cube[side];
+      }
+
+      function addCube(char: string) {
+        const cubeSpace = document.createElement("div");
+        cubeSpace.classList.add("boggl-cube-space");
+        const cubeOuter = document.createElement("div");
+        cubeOuter.classList.add("boggl-cube");
+        const cubeInner = document.createElement("div");
+        cubeInner.classList.add("boggl-cube__inner");
+        cubeInner.textContent = char;
+        cubeOuter.appendChild(cubeInner);
+        cubeSpace.appendChild(cubeOuter);
+        grid.appendChild(cubeSpace);
+      }
+    }
+  }
+  customElements.define("astro-boggl", Boggl);
+</script>
+<style is:global>
+  .boggl-base {
+    --frame-thickness: 0.125rem;
+    --frame-color: #5353de;
+    --frame-shadow: midnightblue;
+    --font-size: max(2rem, 5vw);
+    position: relative;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    background-color: var(--frame-shadow);
+    width: fit-content;
+    border: var(--frame-thickness) solid var(--frame-color);
+    overflow: hidden;
+  }
+
+  .boggl-base::before {
+  }
+
+  .boggl-grid {
+    --cell-size: calc(var(--font-size) * 2);
+    display: grid;
+    grid-template-rows: repeat(4, var(--cell-size));
+    grid-template-columns: repeat(4, var(--cell-size));
+    grid-gap: var(--frame-thickness);
+    padding: var(--frame-thickness);
+    background-color: var(--frame-color);
+    border-radius: 0.25rem;
+  }
+  .boggl-cube-space {
+    background-color: var(--frame-shadow);
+    padding: 0.25rem;
+  }
+  .boggl-cube {
+    background-color: tan;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.125rem;
+  }
+  .boggl-cube__inner {
+    background-color: antiquewhite;
+    border-radius: 1rem;
+    color: darkblue;
+    text-align: center;
+    font-size: var(--font-size);
+    line-height: 1.4;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+  }
+</style>
