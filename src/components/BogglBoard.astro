@@ -2,14 +2,28 @@
 
 ---
 
-<astro-boggl>
+<astro-boggl class="boggl">
   <div class="boggl-base">
+    <div class="boggl-cover">
+      <p class="boggl-status" aria-live="polite"></p>
+    </div>
     <div class="boggl-grid"></div>
+  </div>
+  <div class="boggl-timer" aria-live="polite"></div>
+  <div class="boggl-controls">
+    <button role="button" class="boggl-reset-btn" disabled>Reset</button>
+    <button role="button" class="boggl-start-btn">Start!</button>
   </div>
 </astro-boggl>
 <script>
-  import { CUBES } from "../config";
+  import { CUBES, ROUND_LENGTH_MINS } from "../config";
   import { Chance } from "chance";
+  import {
+    add,
+    compareAsc,
+    differenceInSeconds,
+    secondsToMinutes,
+  } from "date-fns";
   import type { CubeType } from "../types";
 
   class Boggl extends HTMLElement {
@@ -17,17 +31,77 @@
       super();
       const cubes: CubeType[] = [...CUBES];
       const chance = new Chance();
+      const cover = this.querySelector(".boggl-cover") as HTMLDivElement;
+      const status = this.querySelector(".boggl-status") as HTMLElement;
       const grid = this.querySelector(".boggl-grid") as HTMLDivElement;
+      const timer = this.querySelector(".boggl-timer") as HTMLDivElement;
+      const startBtn = this.querySelector(
+        ".boggl-start-btn",
+      ) as HTMLButtonElement;
+      let isShaking = false;
+      let isCounting = false;
 
-      shakeBoard();
+      init();
+
+      function init() {
+        startBtn.addEventListener("click", function () {
+          startRound();
+        });
+
+        shakeBoard();
+      }
+
+      function setReady() {
+        status.textContent = "Ready";
+        timer.textContent = `${ROUND_LENGTH_MINS}:00`;
+        startBtn.removeAttribute("disabled");
+      }
+
+      async function startRound() {
+        if (isShaking) return;
+        isCounting = true;
+        const roundEnd = add(new Date(), { minutes: ROUND_LENGTH_MINS });
+        cover.classList.add("hide");
+        startBtn.setAttribute("disabled", "true");
+        let now = new Date();
+        while (compareAsc(now, roundEnd) < 0) {
+          now = await tick();
+          const diffSeconds = differenceInSeconds(roundEnd, now, {
+            roundingMethod: "floor",
+          });
+          timer.textContent = formatCountdown(diffSeconds);
+        }
+        isCounting = false;
+        timer.textContent = "Time's up!";
+      }
+
+      async function tick() {
+        return new Promise<Date>((resolve) => {
+          setTimeout(function () {
+            const now = new Date();
+            resolve(now);
+          }, 1000);
+        });
+      }
+
+      function formatCountdown(seconds: number) {
+        const minutes = secondsToMinutes(seconds);
+        const leftover = seconds - minutes * 60;
+        return `${minutes}:${leftover}`;
+      }
 
       function shakeBoard() {
+        cover.classList.remove("hide");
+        grid.innerHTML = "";
+        isShaking = true;
         while (cubes.length) {
           const pickedCube = pickCube(cubes);
           const pickedSide = pickSide(pickedCube.cube);
           addCube(pickedSide);
           cubes.splice(pickedCube.index, 1);
         }
+        isShaking = false;
+        setReady();
       }
 
       function pickCube(cubeArray: CubeType[]) {
@@ -60,6 +134,15 @@
   customElements.define("astro-boggl", Boggl);
 </script>
 <style is:global>
+  .boggl {
+    width: 100%;
+    padding: 5vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .boggl-base {
     --frame-thickness: 0.125rem;
     --frame-color: #5353de;
@@ -74,7 +157,18 @@
     overflow: hidden;
   }
 
-  .boggl-base::before {
+  .boggl-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.1);
+    backdrop-filter: blur(0.4rem);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .boggl-grid {
@@ -87,16 +181,19 @@
     background-color: var(--frame-color);
     border-radius: 0.25rem;
   }
+
   .boggl-cube-space {
     background-color: var(--frame-shadow);
     padding: 0.25rem;
   }
+
   .boggl-cube {
     background-color: tan;
     width: 100%;
     height: 100%;
     border-radius: 0.125rem;
   }
+
   .boggl-cube__inner {
     background-color: antiquewhite;
     border-radius: 1rem;
@@ -110,5 +207,49 @@
     justify-content: center;
     align-items: center;
     font-weight: 700;
+  }
+
+  .boggl-controls {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 1rem;
+  }
+
+  .boggl-controls > button {
+    padding: 0.5rem 2rem;
+    color: antiquewhite;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    line-height: 1.4;
+    border: none;
+    box-shadow: inset 0 -0.125rem 0.5rem rgba(15, 15, 15, 0.2);
+  }
+
+  .boggl-start-btn {
+    background-color: seagreen;
+  }
+
+  .boggl-reset-btn {
+    background-color: brown;
+  }
+
+  .boggl-controls > button:disabled {
+    filter: grayscale(1);
+  }
+
+  .hide {
+    display: none;
+  }
+
+  @media screen and (min-width: 768px) {
+    .boggl-controls {
+      flex-direction: row;
+    }
   }
 </style>

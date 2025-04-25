@@ -17,4 +17,4 @@ export const CUBES = [
   ["H", "N", "L", "N", "R", "Z"],
 ];
 
-export const TIMEOUT = 180000; // 3 mins
+export const ROUND_LENGTH_MINS = 3;
