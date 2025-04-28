@@ -76,13 +76,18 @@
         startBtn.setAttribute("disabled", "true");
         resetBtn.removeAttribute("disabled");
         let now = new Date();
-        while (compareAsc(now, roundEnd) < 0) {
+        let isRed = false;
+        while (compareAsc(now, roundEnd) < 1) {
           now = await tick();
           if (!isCounting) return;
           const diffSeconds = differenceInSeconds(roundEnd, now, {
             roundingMethod: "floor",
           });
           timer.textContent = formatCountdown(diffSeconds);
+          if (diffSeconds <= 30 && !isRed) {
+            timer.classList.add("red");
+            isRed = true;
+          }
         }
         isCounting = false;
         timer.classList.add("red");
@@ -92,6 +97,7 @@
       function reset() {
         resetBtn.setAttribute("disabled", "true");
         isCounting = false;
+        timer.classList.remove("red");
         shakeBoard();
       }
 
