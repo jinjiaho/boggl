@@ -17,6 +17,6 @@ export const CUBES = [
   ["H", "N", "L", "N", "R", "Z"],
 ];
 
-export const ROUND_LENGTH_MINS = 3;
+export const ROUND_LENGTH_SECONDS = 90;
 
 export const AUDIO_PATH = "/audio/times-up.wav";
