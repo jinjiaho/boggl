@@ -23,7 +23,7 @@
   </div>
 </astro-boggl>
 <script>
-  import { CUBES, ROUND_LENGTH_MINS } from "../config";
+  import { CUBES, ROUND_LENGTH_MINS, AUDIO_PATH } from "../config";
   import { Chance } from "chance";
   import {
     add,
@@ -49,6 +49,7 @@
       ) as HTMLButtonElement;
       let isShaking = false;
       let isCounting = false;
+      const timesUpAudio = new Audio(AUDIO_PATH);
 
       init();
 
@@ -90,8 +91,7 @@
           }
         }
         isCounting = false;
-        timer.classList.add("red");
-        timer.textContent = "Time's up!";
+        timesUp();
       }
 
       function reset() {
@@ -114,6 +114,12 @@
         const minutes = secondsToMinutes(seconds);
         const leftover = seconds - minutes * 60;
         return `${minutes}:${String(leftover).padStart(2, "0")}`;
+      }
+
+      function timesUp() {
+        timesUpAudio.play();
+        timer.classList.add("red");
+        timer.textContent = "Time's up!";
       }
 
       function shakeBoard() {
