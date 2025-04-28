@@ -1,0 +1,93 @@
+---
+import BogglInstructions from "../components/BogglInstructions.md";
+---
+
+<style>
+  .side-drawer {
+    --padding: 5vw;
+    position: fixed;
+    height: 98svh;
+    width: calc(100vw - calc(var(--padding)) * 3);
+    left: 0;
+    top: 0;
+    transform: translate(-100%);
+    background-color: antiquewhite;
+    padding: 0 var(--padding) calc(var(--padding) * 2);
+    transition: all 1.5s ease;
+    z-index: 2;
+
+    & .drawer-inner {
+      height: 95%;
+      overflow: auto;
+      padding: 1rem;
+    }
+
+    & .drawer-handle {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      width: var(--padding);
+      height: 3rem;
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      transform: translate(90%, -50%);
+      box-shadow: none;
+      border: none;
+      cursor: pointer;
+      background-color: antiquewhite;
+    }
+
+    &.open {
+      transform: translate(calc(var(--padding) * -1));
+
+      & .handle-symbol {
+        display: inline-block;
+        transform: scale(-1, 1);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 0.125rem;
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
+</style>
+<astro-side-drawer class="side-drawer">
+  <article class="drawer-inner">
+    <BogglInstructions />
+  </article>
+  <button role="button" class="drawer-handle"
+    ><span class="handle-symbol">&#187;</span></button
+  >
+</astro-side-drawer>
+<script>
+  class SideDrawer extends HTMLElement {
+    constructor() {
+      super();
+      const drawer = this;
+      const handleBtn = this.querySelector(".drawer-handle") as HTMLElement;
+
+      handleBtn.addEventListener("click", function () {
+        if (drawer.classList.contains("open")) {
+          drawer.classList.remove("open");
+          return;
+        }
+        drawer.classList.add("open");
+      });
+    }
+  }
+  customElements.define("astro-side-drawer", SideDrawer);
+</script>
