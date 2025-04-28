@@ -3,17 +3,23 @@
 ---
 
 <astro-boggl class="boggl">
-  <h1>BOGGLR</h1>
-  <div class="boggl-base">
-    <div class="boggl-cover">
-      <p class="boggl-status" aria-live="polite"></p>
+  <header class="boggl-title">
+    <h1>BOGGLR</h1>
+  </header>
+  <div class="boggl-board">
+    <div class="boggl-base">
+      <div class="boggl-cover">
+        <p class="boggl-status" aria-live="polite"></p>
+      </div>
+      <div class="boggl-grid"></div>
     </div>
-    <div class="boggl-grid"></div>
   </div>
-  <div class="boggl-timer" aria-live="polite"></div>
   <div class="boggl-controls">
-    <button role="button" class="boggl-reset-btn" disabled>Reset</button>
-    <button role="button" class="boggl-start-btn">Start!</button>
+    <div class="boggl-timer" aria-live="polite"></div>
+    <div class="boggl-btns">
+      <button role="button" class="boggl-reset-btn" disabled>Reset</button>
+      <button role="button" class="boggl-start-btn">Start!</button>
+    </div>
   </div>
 </astro-boggl>
 <script>
@@ -60,7 +66,6 @@
       function setReady() {
         status.textContent = "Ready";
         timer.textContent = `${ROUND_LENGTH_MINS}:00`;
-        startBtn.removeAttribute("disabled");
       }
 
       async function startRound() {
@@ -102,10 +107,13 @@
       function formatCountdown(seconds: number) {
         const minutes = secondsToMinutes(seconds);
         const leftover = seconds - minutes * 60;
-        return `${minutes}:${leftover}`;
+        return `${minutes}:${String(leftover).padStart(2, "0")}`;
       }
 
       function shakeBoard() {
+        startBtn.removeAttribute("disabled");
+        timer.textContent = ":";
+        status.textContent = "Shaking...";
         const cubes: CubeType[] = [...CUBES];
         cover.classList.remove("hide");
         grid.innerHTML = "";
@@ -117,7 +125,9 @@
           cubes.splice(pickedCube.index, 1);
         }
         isShaking = false;
-        setReady();
+        setTimeout(() => {
+          setReady();
+        }, 1000);
       }
 
       function pickCube(cubeArray: CubeType[]) {
@@ -154,18 +164,33 @@
     --scale: 5vw;
     width: 100%;
     padding: var(--scale);
+    display: grid;
+    grid-template-areas:
+      "title"
+      "board"
+      "controls";
+    box-sizing: border-box;
+    color: darkblue;
+    grid-gap: calc(var(--scale) * 2);
+
+    @media screen and (orientation: landscape) {
+      --scale: 2.5vw;
+      grid-template-rows: calc(var(--scale) * 5) auto;
+      grid-template-areas:
+        "board title"
+        "board controls";
+      grid-column-gap: calc(var(--scale) * 3);
+      width: fit-content;
+    }
+  }
+  .boggl-controls {
+    grid-area: controls;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
     gap: 1rem;
-    box-sizing: border-box;
-    color: darkblue;
-  }
-
-  @media screen and (orientation: landscape) {
-    .boggl {
-      --scale: 1rem;
-    }
+    text-align: center;
   }
 
   @media screen and (min-width: 768px) {
@@ -176,8 +201,26 @@
 
   @media screen and (min-width: 967px) {
     .boggl {
-      --scale: 2vw;
+      --scale: 2.5vw;
     }
+  }
+
+  .boggl-title {
+    grid-area: title;
+    font-size: var(--scale);
+    text-decoration: underline;
+    margin: 0;
+    text-align: center;
+    height: fit-content;
+  }
+
+  .boggl-board {
+    grid-area: board;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .boggl-base {
@@ -190,6 +233,7 @@
     padding: calc(var(--scale) / 2);
     background-color: var(--frame-shadow);
     width: fit-content;
+    height: fit-content;
     border: var(--frame-thickness) solid var(--frame-color);
     overflow: hidden;
   }
@@ -202,7 +246,7 @@
     height: 100%;
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: inset 0 0 calc(var(--scale) * 8) rgba(0, 0, 255, 0.3);
-    backdrop-filter: blur(0.7rem);
+    backdrop-filter: blur(calc(var(--scale) * 0.7));
     z-index: 2;
     display: flex;
     justify-content: center;
@@ -258,16 +302,16 @@
     padding: 1rem 0;
   }
 
-  .boggl-controls {
+  .boggl-btns {
     display: flex;
     justify-content: space-evenly;
     align-items: stretch;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-self: stretch;
-    gap: 1rem;
+    gap: calc(var(--scale) / 2);
   }
 
-  .boggl-controls > button {
+  .boggl-btns > button {
     padding: calc(var(--scale) * 0.6) calc(var(--scale) * 2);
     color: white;
     border-radius: calc(var(--scale) * 0.5);
@@ -289,7 +333,7 @@
     background-color: firebrick;
   }
 
-  .boggl-controls > button:disabled {
+  .boggl-btns > button:disabled {
     filter: grayscale(1) contrast(0.5);
     cursor: disabled;
   }
@@ -300,11 +344,5 @@
 
   .red {
     color: darkred;
-  }
-
-  @media screen and (min-width: 768px) {
-    .boggl-controls {
-      flex-direction: row;
-    }
   }
 </style>
