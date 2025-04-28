@@ -207,12 +207,13 @@
   .boggl-title {
     grid-area: title;
     font-size: var(--scale);
-    text-decoration: underline;
     text-align: center;
     height: fit-content;
 
     h1 {
       margin: 0.5rem;
+      text-decoration: underline;
+      text-underline-offset: 0.5rem;
     }
   }
 
@@ -257,7 +258,6 @@
 
   .boggl-status {
     font-size: calc(var(--scale) * 2);
-    font-weight: 700;
   }
 
   .boggl-grid {
@@ -295,12 +295,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: 700;
   }
 
   .boggl-timer {
     font-size: calc(var(--scale) * 2);
-    font-weight: 700;
     padding: 1rem 0;
   }
 
@@ -318,13 +316,14 @@
     color: white;
     border-radius: calc(var(--scale) * 0.5);
     font-size: var(--scale);
-    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     line-height: 1.4;
     border: none;
     box-shadow: inset 0 -0.125rem 0.5rem rgba(15, 15, 15, 0.2);
     cursor: pointer;
+    font-family: "Super Corn", sans-serif;
+    letter-spacing: 0.2rem;
   }
 
   .boggl-start-btn {

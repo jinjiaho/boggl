@@ -16,6 +16,16 @@ import BogglBoard from "../components/BogglBoard.astro";
   </head>
   <body>
     <style>
+      @font-face {
+        font-family: "Super Corn";
+        src:
+          url("/fonts/SuperCorn.woff2") format("woff2"),
+          url("/fonts/SuperCorn.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
       html,
       body {
         box-sizing: border-box;
@@ -24,9 +34,6 @@ import BogglBoard from "../components/BogglBoard.astro";
         min-height: 100vh;
         margin: 0;
         padding: 0;
-        font-family:
-          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-          sans-serif;
         font-style: normal;
         display: flex;
         align-items: center;
@@ -39,6 +46,8 @@ import BogglBoard from "../components/BogglBoard.astro";
         background-size: 100%;
         box-sizing: border-box;
         overflow: hidden;
+        font-family: "Super Corn", sans-serif;
+        letter-spacing: 0.2rem;
       }
     </style>
     <BogglBoard />
