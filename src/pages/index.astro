@@ -18,10 +18,25 @@ import "../styles.css";
       href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
       rel="stylesheet"
     />
-    <title>Boggl</title>
+    <title>Bogglr</title>
   </head>
   <body>
-    <h1>Boggl</h1>
+    <style>
+      html,
+      body {
+        box-sizing: border-box;
+        max-width: 100vw;
+        min-height: 100vh;
+      }
+
+      body {
+        background-image: linear-gradient(45deg, orangered, orange);
+        background-repeat: no-repeat;
+        background-size: 100%;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+    </style>
     <BogglBoard />
   </body>
 </html>
