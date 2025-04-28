@@ -161,7 +161,7 @@
 </script>
 <style is:global>
   .boggl {
-    --scale: 5vw;
+    --scale: min(4svh, 5vw);
     width: 100%;
     padding: var(--scale);
     display: grid;
@@ -174,13 +174,25 @@
     grid-gap: calc(var(--scale) * 2);
 
     @media screen and (orientation: landscape) {
-      --scale: 2.5vw;
+      --scale: min(4svh, 2.5vw);
       grid-template-rows: calc(var(--scale) * 5) auto;
       grid-template-areas:
         "board title"
         "board controls";
       grid-column-gap: calc(var(--scale) * 3);
       width: fit-content;
+    }
+
+    @media screen and (min-width: 768px) {
+      .boggl {
+        --scale: max(4svh, 3vw);
+      }
+    }
+
+    @media screen and (min-width: 967px) {
+      .boggl {
+        --scale: max(4svh, 2.5vw);
+      }
     }
   }
   .boggl-controls {
@@ -191,18 +203,6 @@
     justify-content: space-evenly;
     gap: 1rem;
     text-align: center;
-  }
-
-  @media screen and (min-width: 768px) {
-    .boggl {
-      --scale: 3vw;
-    }
-  }
-
-  @media screen and (min-width: 967px) {
-    .boggl {
-      --scale: 2.5vw;
-    }
   }
 
   .boggl-title {
