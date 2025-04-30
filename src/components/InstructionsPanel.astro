@@ -4,15 +4,15 @@ import BogglInstructions from "../components/BogglInstructions.md";
 
 <style>
   .side-drawer {
-    --padding: 5vw;
+    --padding: max(4vw, 3rem);
     position: fixed;
     height: 98svh;
-    width: calc(100vw - calc(var(--padding)) * 3);
+    width: min(30rem, 90vw);
     left: 0;
     top: 0;
     transform: translate(-100%);
     background-color: antiquewhite;
-    padding: 0 var(--padding) calc(var(--padding) * 2);
+    padding-bottom: calc(var(--padding) * 2);
     transition: all 1.5s ease;
     z-index: 2;
 
@@ -26,19 +26,22 @@ import BogglInstructions from "../components/BogglInstructions.md";
       position: absolute;
       top: 50%;
       right: 0;
-      width: var(--padding);
-      height: 3rem;
+      width: calc(var(--padding) / 1.5);
+      height: var(--padding);
       border-top-right-radius: 0.5rem;
       border-bottom-right-radius: 0.5rem;
-      transform: translate(90%, -50%);
+      transform: translate(90%, -100%);
       box-shadow: none;
       border: none;
       cursor: pointer;
       background-color: antiquewhite;
+      font-size: 1.2rem;
+      z-index: -1;
     }
 
     &.open {
-      transform: translate(calc(var(--padding) * -1));
+      /* transform: translate(calc(var(--padding) * -1)); */
+      transform: translate(0);
 
       & .handle-symbol {
         display: inline-block;
