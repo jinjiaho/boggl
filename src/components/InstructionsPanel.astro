@@ -26,27 +26,33 @@ import BogglInstructions from "../components/BogglInstructions.md";
       position: absolute;
       top: 50%;
       right: 0;
-      width: calc(var(--padding) / 1.5);
-      height: var(--padding);
+      height: calc(var(--padding) * 0.5);
+      width: calc(var(--padding) * 2.5);
       border-top-right-radius: 0.5rem;
-      border-bottom-right-radius: 0.5rem;
-      transform: translate(90%, -100%);
+      border-top-left-radius: 0.5rem;
+      transform: scale(-1, -1) rotate(270deg) translate(-50%, -280%);
+      transform-origin: center;
       box-shadow: none;
       border: none;
       cursor: pointer;
       background-color: antiquewhite;
-      font-size: 1.2rem;
+
       z-index: -1;
+      opacity: 0.7;
+
+      & .handle-symbol {
+        font-family: "Super Corn";
+        letter-spacing: 0.1rem;
+      }
     }
 
     &.open {
-      /* transform: translate(calc(var(--padding) * -1)); */
       transform: translate(0);
-
+      /*
       & .handle-symbol {
         display: inline-block;
         transform: scale(-1, 1);
-      }
+      } */
     }
 
     ::-webkit-scrollbar {
@@ -73,7 +79,7 @@ import BogglInstructions from "../components/BogglInstructions.md";
     <BogglInstructions />
   </article>
   <button role="button" class="drawer-handle"
-    ><span class="handle-symbol">&#187;</span></button
+    ><span class="handle-symbol">Instructions</span></button
   >
 </astro-side-drawer>
 <script>
